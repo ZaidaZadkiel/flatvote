@@ -1,5 +1,4 @@
 <?php
-
 // Allow from any origin
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
@@ -22,28 +21,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
     exit(0);
 }
-header("Access-Control-Expose-Headers: Date, timestamp");
+header("Access-Control-Expose-Headers: Date, timestamp, test");
 header("Content-type:application/json");
 header("timestamp:".strftime('%Y-%m-%d %H:%M:%S',time()));
+// header('test: initial');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
    return 0;
-}
-
-$post = file_get_contents('php://input');
-
-$servername = "localhost";
-$username = "id14619952_zaida";
-$password = "lNbA(\xght06HR|[";
-$database = "id14619952_zaidazadkiel";
-
-try {
-  $conn = new PDO("mysql:host=$servername;dbname=$database", $username, $password);
-  // set the PDO error mode to exception
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-  // echo "Connected successfully";
-} catch(PDOException $e) {
-  echo '{"error":"' . $e->getMessage() .'"}';
 }
 ?>

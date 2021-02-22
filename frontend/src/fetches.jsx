@@ -16,7 +16,7 @@ export function timeAgo(oldTime){
 
 export function createUser(userobj){
   console.table(userobj);
-  return fetch(debugUrl()+getUrl("createUser.php"),
+  return fetch(getUrl("createUser.php"),
     {
       method: 'POST', // or 'PUT'
       headers: {
@@ -34,7 +34,7 @@ export function createUser(userobj){
 export function castVote (vote){
     console.table(FormData);
 
-    return fetch(debugUrl()+getUrl("castVote.php"),
+    return fetch(getUrl("castVote.php"),
       {
         method: 'POST', // or 'PUT'
         headers: {
@@ -53,8 +53,13 @@ export function castVote (vote){
   }
 
 
-  export function getUrl (path){console.log("http://zaidazadkiel.com/flatvote/db/"+path); return "http://zaidazadkiel.com/flatvote/db/"+path }
-  export function debugUrl (path){return process.env.NODE_ENV == "development" ? "https://cors-anywhere.herokuapp.com/" : "" }
+  export function getUrl (path){
+    console.log("http://zaidazadkiel.com/flatvote/db/"+path);
+    return process.env.NODE_ENV == "development"
+      ? "http://zaidazadkiel.com/flatvote/db/"+path  //"https://cors-anywhere.herokuapp.com/"
+      : "http://localhost:8888/"+path  
+
+  }
   // function castVote(){getQuestion()}
 
   export function updateServerDate (res){

@@ -22,14 +22,14 @@ const CreateUser = ({ObjQuestion}) => {
             <td colSpan="2">email should go here but its not</td>
           </tr>
           <tr>
-            <td colSpan="2"><input className="w-full"
-                                   type="submit"
-                                   onClick={
-                                     ()=>{
-                                       createUser(FormData).then(
-                                         x=>console.log(x)
-                                       )}
-                                     }/></td>
+            <td colSpan="2">
+              <input className="w-full" type="submit"
+                     onClick={
+                       ()=>{
+                         createUser(FormData).then(
+                           x=>console.log(x)
+                         )}
+                       }/></td>
           </tr>
           </tbody>
         </table>
