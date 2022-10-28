@@ -14,22 +14,45 @@ export function timeAgo(oldTime){
 
 };
 
-export function createUser(userobj){
-  console.table(userobj);
-  return fetch(getUrl("createUser.php"),
+function my_fetch(url, obj, auth){
+  console.table(obj);
+
+  if(!(auth?.token)) throw new Error('fetch request must include auth.token');
+
+  let data = typeof(obj === "string") ? JSON.stringify(obj) : obj;
+
+  return fetch(
+    getUrl(url),
     {
-      method: 'POST', // or 'PUT'
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ "username":FormData.username,
-                             "password":FormData.password
-                            }),
+      "body"   : data,
+      "method" : "POST",
+      "mode"   : "cors",
+      "credentials": "include"
     }
   )
   .then(res  => updateServerDate(res))
   .then(json => json);
 }
+
+export function createUser(userobj){
+//TODO: validation
+  return my_fetch("users.php?action=signup", userobj, {token:"create"});
+}
+export function loginUser(userobj, auth){
+//TODO: validation
+  return my_fetch("users.php?action=login", userobj, {token:"login"});
+}
+  // return fetch(getUrl("createUser.php"),
+  //   {
+  //     method: 'POST', // or 'PUT'
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({ "username":FormData.username,
+  //                            "password":FormData.password
+  //                           }),
+  //   }
+  // )
 
 export function castVote (vote){
     console.table(FormData);
@@ -56,8 +79,8 @@ export function castVote (vote){
   export function getUrl (path){
     console.log("http://zaidazadkiel.com/flatvote/db/"+path);
     return process.env.NODE_ENV == "development"
-      ? "http://zaidazadkiel.com/flatvote/db/"+path  //"https://cors-anywhere.herokuapp.com/"
-      : "http://localhost:8888/"+path  
+      ? "http://localhost:8888/"+path
+      : "http://zaidazadkiel.com/flatvote/db/"+path  //"https://cors-anywhere.herokuapp.com/"
 
   }
   // function castVote(){getQuestion()}

@@ -1,35 +1,75 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from "react-dom";
+import ReactDOM     from "react-dom";
 import { register } from "codelift";
-// import TimeAgo from 'javascript-time-ago'
-import {getDocument, getQuestion, getAllUsers, listQuestions, timeAgo} from './fetches.jsx';
-import ViewVote from './ViewVote.jsx';
+// import TimeAgo           from 'javascript-time-ago'
+import {
+  getDocument,
+  getQuestion,
+  getAllUsers,
+  listQuestions,
+  timeAgo
+} from './fetches.jsx';
+import ViewVote   from './ViewVote.jsx';
 import CreateUser from './CreateUser.jsx';
-import Header from './pieces/Header'
+import LoginUser  from './LoginUser.jsx';
+import Header     from './pieces/Header'
+import {useAuth}  from './authContext';
+
 
 
 register({ React, ReactDOM });
+
 const version = require("./version.json");
+
 function App() {
+  const [auth, setAuth] = useAuth();
 
-  // const timeAgo = new TimeAgo('en-US');
-  const [Users, setUsers]               = useState(0);
-  const [MainView, setMainView]         = useState(<CreateUser/>);
+  const LoginLinks= (
+      <div className="m-4">
+        <div className="text-center">Need to login</div><br/>
+        <span className="btn ">
+          <button  onClick={()=>setMainView(<LoginUser/>)}>Login</button>
+        </span>
+        <span className="px-4">
+          <button  onClick={()=>setMainView(<CreateUser/>)}>Sign up</button>
+        </span>
+      </div>
+  );
 
-  // const [count, setCount]               = useState(0);
-  const [VoteRes,      setVoteRes]      = useState({});
-  const [FormData,     setFormData]     = useState({});
-  const [ObjQuestion,  setObjQuestion]  = useState(null);
-  const [LstQuestions, setLstQuestions] = useState({});
-  const [ServerDate,   setServerDate]   = useState(null);
-  const [Document,     setDocument]     = useState(null);
+  const Overview=(
+    <div className="flex text-left">
+      <div className="align-left">
+        <h1>Overview</h1>
+        <ul>
+          <li><button onClick={()=>setMainView(ProjectView)  } >Projects</button></li>
+          <li><button onClick={()=>setMainView(DocumentsView)} >Documents</button></li>
+          <li><button onClick={()=>setMainView(VotesView)    } >Votes</button></li>
+        </ul>
+      </div>
+      <div>
+        <h1>text</h1>
+      </div>
+    </div>
+  );
 
-  useEffect(() => {
-    getDocument(1) .then(x => setDocument(x));
-    getAllUsers()  .then(x => setUsers(x));
-    listQuestions().then(x => setLstQuestions(x));
-  }, [true] );
-
+  const ProjectView = (
+    <div>
+      Projects
+      <button className="px-4" onClick={()=>setMainView(Overview)}>Go to Overview</button>
+    </div>
+  );
+  const DocumentsView = (
+    <div>
+      Documents
+      <button className="px-4" onClick={()=>setMainView(Overview)}>Go to Overview</button>
+    </div>
+  );
+  const VotesView = (
+    <div>
+      Votes
+      <button className="px-4" onClick={()=>setMainView(Overview)}>Go to Overview</button>
+    </div>
+  );
 
   // function getUrl(path){console.log("http://zaidazadkiel.com/flatvote/db/"+path); return "http://zaidazadkiel.com/flatvote/db/"+path }
   // function debugUrl(path){return process.env.NODE_ENV == "development" ? "https://cors-anywhere.herokuapp.com/" : "" }
@@ -108,7 +148,6 @@ function App() {
   // }
 
 
-
   function showQuestionList(){
     return <div className="p-3">
 
@@ -177,6 +216,7 @@ function App() {
       case 'disputed'  : return "italic";
       case 'considered': return "";
     }	}
+
     return <div>
         <p>Title: { Document[0].txt_name } </p>
 
@@ -216,16 +256,40 @@ function App() {
   function showRoot(){
     return <div>hello im root</div>
   }
+
+
+  // const timeAgo = new TimeAgo('en-US');
+  console.log( (auth && auth.token) || "no token");
+  const [Users, setUsers]               = useState(0);
+  const [MainView, setMainView]         = useState((auth && auth.token) ? Overview : LoginLinks );
+
+  // const [count, setCount]               = useState(0);
+  const [VoteRes,      setVoteRes]      = useState({});
+  const [FormData,     setFormData]     = useState({});
+  const [ObjQuestion,  setObjQuestion]  = useState(null);
+  const [LstQuestions, setLstQuestions] = useState({});
+  const [ServerDate,   setServerDate]   = useState(null);
+  const [Document,     setDocument]     = useState(null);
+
+  useEffect(() => {
+    // getDocument(1) .then(x => setDocument(x));
+    // getAllUsers()  .then(x => setUsers(x));
+    // listQuestions().then(x => setLstQuestions(x));
+    if(auth && auth.token) {
+      setMainView(Overview)
+      localStorage.setItem("obj", JSON.stringify(auth));
+    }
+  }, [auth] );
+
+
   return (
-    <div className="h-screen w-screen justify-center items-start ">
-      <div className="text-xs self-center absolute object-right-bottom bottom-0"> {version.version} on {version.date}</div>
-
-      <Header />
-
-      <div className="flex flex-row p-8 justify-center">
-        {MainView ? MainView : "why" }
+      <div className="h-screen w-container justify-center items-start p-10 m-10">
+        <Header />
+        <div className="flex flex-row justify-center rounded overflow-hidden shadow-lg bg-gray-100 ">
+          {MainView}
+        </div>
+        <div className="text-xs self-center absolute object-right-bottom bottom-0"> {version.version} on {version.date}</div>
       </div>
-    </div>
   );
 }
 

@@ -30,7 +30,7 @@ echo <<<DOC
 </head>
 
 <body>
-  <div class="w3-col l6 w3-padding-large">
+  <div class="w3-col l11 w3-padding-large">
   <h2>$host</h2>
   <div style="margin-bottom: 1em">
     token: <span id="token"></span>

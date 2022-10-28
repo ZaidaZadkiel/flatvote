@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {createUser, timeAgo} from './fetches.jsx';
+import {loginUser, timeAgo} from './fetches.jsx';
 import {useAuth} from './authContext';
 
-const CreateUser = ({ObjQuestion}) => {
+const LoginUser = ({ObjQuestion}) => {
   const [auth, setAuth]         = useAuth();
   const [FormData, setFormData] = useState({});
   const [Result,   setResult]   = useState({});
 
-  return CreateUserForm();
+  return LoginUserForm();
 
-  function CreateUserForm(){
+  function LoginUserForm(){
     return (
       <div>
-        <div>Create user form</div>
+        <div>Login User</div>
 
         <table>
         <tbody>
@@ -23,15 +23,6 @@ const CreateUser = ({ObjQuestion}) => {
               type="text"
               placeholder="username"
               onChange={(evt) => setFormData({...FormData, username: evt.target.value})}
-            /></td>
-          </tr>
-          <tr>
-            <td>Email:</td>
-            <td><input
-              className="border"
-              type="text"
-              placeholder="password"
-              onChange={(evt) => setFormData({...FormData, email: evt.target.value})}
             /></td>
           </tr>
           <tr>
@@ -48,7 +39,7 @@ const CreateUser = ({ObjQuestion}) => {
               <input className="w-full" type="submit"
                      onClick={
                        ()=>{
-                         createUser(FormData)
+                         loginUser(FormData, auth)
                           .then(x=>{
                              console.log(x);
                              setAuth(x);
@@ -66,4 +57,4 @@ const CreateUser = ({ObjQuestion}) => {
 
 };
 
-export default CreateUser;
+export default LoginUser;

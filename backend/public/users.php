@@ -1,6 +1,6 @@
 <?php
   $params = [
-    "create" => [
+    "signup" => [
       "username" => "text",
       "email"    => "email",
       "password" => "password",
@@ -8,19 +8,22 @@
     "login" => [
       "username" => "text",
       "password" => "password",
-      "extra" => "optional numeric"
+      "extra"    => "optional numeric"
     ],
     "profile" => [
       "status" => "text",
       "avatar" => "optional image"
     ],
-    "project" => [
-      "id_project" => "numeric",
-      "action" => ["subscribe","leave"]
+    "find" => [
+      "object" => ["projects","documents", "votes"],
+      "owner"  => "optional numeric",
+      "id"     => "optional numeric",
+      "tags"   => "optional text",
+
     ]
   ];
 
-  function create($data){
+  function signup($data){
     global $mysql;
     $hash = password_hash($data["password"], PASSWORD_DEFAULT);
     $sql = "INSERT INTO `flatvote_user` (`ts_creation`, `txt_name`, `pwd_password`) VALUES (current_timestamp(), :username, :password)";
@@ -54,8 +57,11 @@
         $gg = $time->fetchAll();
 
         return [
-          "query"   => $query->queryString,
-          "profile" => $user[0],
+          "profile" => [
+            "username"  => $user[0]["txt_name"],
+            "lastLogin" => $user[0]["ts_last_login"],
+            "id"        => $user[0]["id"]
+          ],
           "token"   => base64_encode(json_encode([
                 "id"   => $user[0]["id"],
                 "user" => $user[0]["txt_name"],
@@ -96,8 +102,36 @@
     return array("data" => $user[0]);
   }
 
-  function project($data){
-    return $data; // array("hello" => "what");
+  // "find" => [
+  //   "object" => ["projects","documents", "votes"],
+  //   "user"   => "optional numeric",
+  //   "id"     => "optional text",
+  //   "tags"   => "optional text",
+  //
+  // ]
+  function find($data, $userdata){
+    $object = "all";
+    switch($data["object"]){
+      case "projects":   return ["data" => object_get_projects($data, $userdata) ];
+      case "documents":  return ["data" => "doc"];
+      case "votes":      return ["data" => "vot"];
+      default:           return ["error" => "object is not one of ".  $params["find"]["object"] ]; //this never happens
+    }
+  }
+
+  function object_get_projects($data, $userdata){
+    global $mysql;
+    $project = (empty($data["id"])    ? false           : $data["id"] );
+    $owner   = (empty($data["owner"]) ? $userdata["id"] : $data["owner"] );
+    $sql = "SELECT * FROM `flatvote_projects` where `id_owner`=:owner" . ($project==false ? "" : " and `id`=:project" );
+
+    $query = $mysql->prepare($sql);
+    $query->bindParam(":owner",    $owner);
+    if($project != false) $query->bindParam(":project", $project);
+    $query->execute();
+    $user = $query->fetchAll();
+
+    return $user;
   }
 
   include 'util/input.php';

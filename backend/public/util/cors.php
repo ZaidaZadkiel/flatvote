@@ -3,8 +3,8 @@
 if (isset($_SERVER['HTTP_ORIGIN'])) {
     // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
     // you want to allow, and if so:
-    // header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-    header("Access-Control-Allow-Origin: *");
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+    // header("Access-Control-Allow-Origin: *");
     header('Access-Control-Allow-Credentials: true');
     header('Access-Control-Max-Age: 86400');    // cache for 1 day
 }
@@ -23,7 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 }
 header("Access-Control-Expose-Headers: Date, timestamp, test");
 header("Content-type:application/json");
-header("timestamp:".strftime('%Y-%m-%d %H:%M:%S',time()));
+header("timestamp:".date(DATE_RFC2822) );
+// header("timestamp:".strftime('%Y-%m-%d %H:%M:%S',time()));
 // header('test: initial');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

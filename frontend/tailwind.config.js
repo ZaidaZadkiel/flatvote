@@ -1,7 +1,7 @@
 module.exports = {
   important: true,
   //Purging for Production is configured in PostCSS Config
-  purge:{    
+  purge:{
     content: ["./src/**/*.html", "./src/**/*.jsx", "./src/**/*.js"],
   },
   theme: {
@@ -9,4 +9,7 @@ module.exports = {
   },
   variants: {},
   plugins: [],
+  corePlugins: {
+    preflight: false,
+   }
 };

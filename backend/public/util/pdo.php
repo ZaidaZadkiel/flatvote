@@ -1,12 +1,12 @@
 <?php
-$servername = "localhost";
-$username = "id14619952_zaida";
+$servername = "database";
+$username = "myuser";
 if($_SERVER['HTTP_HOST'] == "zaidazadkiel.com"){
-  $password = "lNbA(\xght06HR|[";
+  $password = "secret";
 } else {
-  $password = "pass";
+  $password = "secret";
 }
-$database = "id14619952_zaidazadkiel";
+$database = "mydb";
 
 global $mysql;
 try{

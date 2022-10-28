@@ -16,7 +16,7 @@ if(empty($params)){
 
 
 function check_authorization(){
-  if($_GET['action'] == "login") return true; //we always allow login
+  if($_GET['action'] == "login" || $_GET['action'] == "signup") return true; //we always allow login
   if(!isset($_SERVER['HTTP_AUTHORIZATION'])) return false; //everything else needs auth
 
   $token = $_SERVER['HTTP_AUTHORIZATION'];
@@ -62,12 +62,12 @@ function input_valid($params, $data){
 
   // if( count(array_diff_key($data, $params)) == 0 ){
   $validated = array();
-  $invalid = array();
+  $invalid   = array();
   foreach($params as $name => $type ) {
     $optional = is_string($type) && (strpos($type, "optional") === 0);
     $str_type = ($optional ? substr($type, 9) : $type);
 
-    if(type_check($data[$name], $str_type ) ) {
+    if(!empty($data[$name]) && type_check($data[$name], $str_type ) ) {
       $validated[$name] = $data[$name];
     } else {
       if($optional == true && !empty($data[$name])) $invalid[] = $name." is not ".$str_type;
@@ -119,14 +119,4 @@ if(isset($_GET['action']) && isset($params[$_GET['action']]) ){
     "action" => $params
   ]);
 }
-
-// echo json_encode([
-//   "error" =>  "data not set",
-//   "actions" => isset($_GET['action']) ? $params[$_GET['action']] : $params,
-//   "data" => $data,
-//   "method" => $_SERVER['REQUEST_METHOD']
-// ]);
-
-exit();
-
 ?>

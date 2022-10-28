@@ -1,14 +1,14 @@
 <?php
   $params = [
     "create" => [
-      "txt_username" => "text",
-      "txt_email"    => "email",
-      "txt_password" => "password",
+      "name"        => "text",
+      "description" => "text",
+      "tags"        => "text", //TODO: add array type validation
     ],
-    "login" => [
-      "txt_username" => "text",
-      "txt_password" => "password",
-      "extra" => "optional numeric"
+    "list" => [
+      "name" => "optional text",
+      "tag"  => "optional text",
+      "date" => "optional text"
     ],
     "profile" => [
       "status" => "text",
