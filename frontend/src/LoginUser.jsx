@@ -19,10 +19,10 @@ const LoginUser = ({ObjQuestion}) => {
           <tr>
             <td>Username:</td>
             <td><input
-              className="border"
-              type="text"
+              className  ="border"
+              type       ="text"
               placeholder="username"
-              onChange={(evt) => setFormData({...FormData, username: evt.target.value})}
+              onChange   ={(evt) => setFormData({...FormData, username: evt.target.value})}
             /></td>
           </tr>
           <tr>

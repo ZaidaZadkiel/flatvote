@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM     from "react-dom";
-import { register } from "codelift";
+// import { register } from "codelift";
 // import TimeAgo           from 'javascript-time-ago'
 import {
   getDocument,
@@ -17,7 +17,7 @@ import {useAuth}  from './authContext';
 
 
 
-register({ React, ReactDOM });
+// register({ React, ReactDOM });
 
 const version = require("./version.json");
 
@@ -284,11 +284,16 @@ function App() {
 
   return (
       <div className="h-screen w-container justify-center items-start p-10 m-10">
+
         <Header />
+
         <div className="flex flex-row justify-center rounded overflow-hidden shadow-lg bg-gray-100 ">
           {MainView}
         </div>
-        <div className="text-xs self-center absolute object-right-bottom bottom-0"> {version.version} on {version.date}</div>
+
+        <div className="text-xs self-center absolute object-right-bottom bottom-0">
+          {version.version} on {version.date}: {JSON.stringify(auth)}
+        </div>
       </div>
   );
 }

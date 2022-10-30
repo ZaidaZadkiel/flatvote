@@ -1,32 +1,33 @@
 version: '3.8'
 
 services:
+
   nginx:
     build:
-      context: ./nginx
+      context: ./backend/docker/nginx
     container_name: nginx
     restart: unless-stopped
     volumes:
-      - ./backend/public/:/var/www/html
+      - ./backend/public/:/var/www/html/api
     depends_on:
       - php-fpm
       - database
     ports:
       - 8888:80
     networks:
-      - php-stack
+      - flatvote
 
   php-fpm:
     build:
-      context: ./php-fpm
+      context: ./backend/docker/php-fpm
     container_name: php-fpm
     restart: unless-stopped
     volumes:
-      - ./backend/public/:/var/www/html
+      - ./backend/public/:/var/www/html/api
     depends_on:
       - database
     networks:
-      - php-stack
+      - flatvote
 
   phpmyadmin:
     image: phpmyadmin:latest
@@ -34,13 +35,13 @@ services:
     restart: unless-stopped
     environment:
       - PMA_ARBITRARY=1
-      - TZ=Africa/Johannesburg
+      - TZ=America/Mexico_City
     ports:
       - 8081:80
     depends_on:
       - database
     networks:
-      - php-stack
+      - flatvote
 
   database:
     image: mariadb:latest
@@ -52,10 +53,32 @@ services:
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=docker
     volumes:
-      - ./database/data.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./backend/data_schema.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
-      - php-stack
+      - flatvote
+
+  frontend:
+    image: node:18-buster
+    container_name: frontend
+    user: node
+    environment:
+      - PORT=3000
+      - CHOKIDAR_USEPOLLING=true
+    # restart: always
+    ports:
+      - 3000:3000
+    networks:
+      - flatvote
+      # preproduction:
+      #   aliases:
+      #     - frontend
+    volumes:
+      - ./frontend/:/app/frontend/
+    command: sh -c "cd /app/frontend && echo 'wtf' && cat package.json && npm install && npm run start && sleep infinity"
+    depends_on:
+      - database
+
 
 networks:
-  php-stack:
-    name: php-stack
+  flatvote:
+    name: flatvote
