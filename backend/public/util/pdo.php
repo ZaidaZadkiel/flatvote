@@ -1,12 +1,11 @@
 <?php
 $servername = "database";
-$username = "myuser";
-if($_SERVER['HTTP_HOST'] == "zaidazadkiel.com"){
-  $password = "secret";
-} else {
-  $password = "secret";
-}
-$database = "mydb";
+$username   = getenv('MYSQL_USER');
+$password   = getenv('MYSQL_PASSWORD');
+$database   = getenv('MYSQL_DATABASE');
+
+
+
 
 global $mysql;
 try{

@@ -21,6 +21,11 @@ services:
     build:
       context: ./backend/docker/php-fpm
     container_name: php-fpm
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_SERVER_NAME=database
     restart: unless-stopped
     volumes:
       - ./backend/public/:/var/www/html/api
@@ -48,10 +53,10 @@ services:
     container_name: database
     restart: unless-stopped
     environment:
-      - MYSQL_DATABASE=mydb
-      - MYSQL_USER=myuser
-      - MYSQL_PASSWORD=secret
-      - MYSQL_ROOT_PASSWORD=docker
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
       - ./backend/data_schema.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
