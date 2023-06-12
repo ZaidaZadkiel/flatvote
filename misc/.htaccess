@@ -1,0 +1,29 @@
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+<IfModule mod_env.c>
+    SetEnv APP_ENVIRONMENT production
+    SetEnv MYSQL_DATABASE <database>
+    SetEnv MYSQL_USER thisismyusername
+    SetEnv MYSQL_PASSWORD thisismypassword
+</IfModule>
+
+<IfModule mod_rewrite.c>
+
+  RewriteEngine On
+  RewriteBase /admin/
+
+  RewriteCond %{REQUEST_URI} ^/admin/.*
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^.*$ /admin/index.html [L]
+
+  RewriteBase /
+
+  RewriteRule ^index\.php$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.php [L]
+
+</IfModule>
+~                                                                                                        
+~                  

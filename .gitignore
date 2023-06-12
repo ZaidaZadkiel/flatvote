@@ -7,3 +7,5 @@ frontend/node_modules/wonka/esy.lock/.gitattributes
 misc/*autosave.kra
 db-old/*
 db/.htaccess
+misc/apache2/*
+misc/mysql_data/*

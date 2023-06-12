@@ -2,69 +2,52 @@ version: '3.8'
 
 services:
 
-  nginx:
+  fvwebserver:
     build:
-      context: ./backend/docker/nginx
-    container_name: nginx
-    restart: unless-stopped
-    volumes:
-      - ./backend/public/:/var/www/html/api
-    depends_on:
-      - php-fpm
-      - database
+      context: ./docker/apache2
+    container_name: "fvwebserver"
+    restart: "always"
     ports:
-      - 8888:80
-    networks:
-      - flatvote
-
-  php-fpm:
-    build:
-      context: ./backend/docker/php-fpm
-    container_name: php-fpm
+      - "8888:80"
+      - "4444:443"
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_SERVER_NAME=database
-    restart: unless-stopped
+      - MYSQL_SERVER_NAME=fvdatabase
+    links:
+      - fvdatabase
     volumes:
-      - ./backend/public/:/var/www/html/api
+      - ./docker/php/php.ini:/usr/local/etc/php/php.ini
+      - ./docker/apache2/apache2.conf:/etc/apache2/apache2.conf
+      - ./docker/vhosts:/etc/apache2/sites-enabled
+      - ./misc/apache2:/var/log/apache2
+      - ./website/backend/api:/var/www/html/api/
     depends_on:
-      - database
+      - fvdatabase
     networks:
       - flatvote
 
-  phpmyadmin:
-    image: phpmyadmin:latest
-    container_name: phpmyadmin
-    restart: unless-stopped
-    environment:
-      - PMA_ARBITRARY=1
-      - TZ=America/Mexico_City
-    ports:
-      - 8081:80
-    depends_on:
-      - database
-    networks:
-      - flatvote
-
-  database:
+  fvdatabase:
     image: mariadb:latest
-    container_name: database
+    container_name: fvdatabase
     restart: unless-stopped
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 3306:3306
     volumes:
-      - ./backend/data_schema.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./misc/data_schema.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./misc/mysql_data:/var/lib/mysql
     networks:
       - flatvote
 
-  frontend:
+  cms:
     image: node:18-buster
-    container_name: frontend
+    container_name: cms
     user: node
     environment:
       - PORT=3000
@@ -74,14 +57,11 @@ services:
       - 3000:3000
     networks:
       - flatvote
-      # preproduction:
-      #   aliases:
-      #     - frontend
     volumes:
-      - ./frontend/:/app/frontend/
-    command: sh -c "cd /app/frontend && echo 'wtf' && cat package.json && npm install && npm run start && sleep infinity"
+      - ./website/cms/:/app/cms/
+    command: sh -c "cd /app/cms && echo 'wtf' && cat package.json && npm install && npm run start && sleep infinity"
     depends_on:
-      - database
+      - fvdatabase
 
 
 networks:
