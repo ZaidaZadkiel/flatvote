@@ -38,7 +38,8 @@ stop: ##@Container Stop php container
 destroy: ##@Container Remove all data related with php container
 	docker compose -f ./docker-compose.dev.yml down --rmi all
 
-dist: ##@Container SHH in container
+builddist: ##@Container SHH in container
+	rm -rf $(RELEASE_DIR)
 	mkdir -p $(RELEASE_DIR)
 	docker exec cms sh -c "cd $(DOCKER_REACT_PATH) && npm run build"
 	cp $(LOCAL_REACT_PATH) $(RELEASE_DIR) -r
